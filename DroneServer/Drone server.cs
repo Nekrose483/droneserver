@@ -23,20 +23,18 @@ namespace DroneServer
     public static class AdminTools
     {
         //you can disconnect a user with this.
-        public static void disconnectUser(string Nick, string reason)
-        {
-            string nickToKill = Nick;
-            foreach (var c in Lists.getConnectionByNick)
-            {
-                if (c.Key.ToLower() == Nick.ToLower())
-                {
-                    nickToKill = c.Key;
-                }
-            }
-            if (Lists.getConnectionByNick.ContainsKey(nickToKill))
-            {
-                ChatServer.SendAdminMessage(reason);
-                Lists.getConnectionByNick[nickToKill].CloseConnection();
+        public static void disconnectUser (string Nick, string reason)
+		{
+			string nickToKill = Nick;
+			foreach (var c in Lists.getConnectionByNick) {
+				if (c.Key.ToLower () == Nick.ToLower ()) {
+					nickToKill = c.Key;
+				}
+			}
+			if (Lists.getConnectionByNick.ContainsKey (nickToKill)) {
+				ChatServer.SendAdminMessage (reason);
+				Lists.getConnectionByNick [nickToKill].CloseConnection ();
+				Console.WriteLine ("Disconnecting user [" +(string) Nick + "]");
             }
         }
         //mute users with this
@@ -192,30 +190,30 @@ namespace DroneServer
         private Thread thrListener;
         private TcpListener tlsClient;
         bool ServRunning = false;
-        public static void AddUser(TcpClient tcpUser, string strUsername, Connection connect)
-        {
-            SendAdminMessage(strUsername + " connected.");
-            ChatServer.htUsers.Add(strUsername, tcpUser);
-            ChatServer.htConnections.Add(tcpUser, strUsername);
-            Lists.addConnection(strUsername, connect);
+        public static void AddUser (TcpClient tcpUser, string strUsername, Connection connect)
+		{
+			SendAdminMessage (strUsername + " connected.");
+			ChatServer.htUsers.Add (strUsername, tcpUser);
+			ChatServer.htConnections.Add (tcpUser, strUsername);
+			Lists.addConnection (strUsername, connect);
+			Console.WriteLine ("Connecting user ["+ (string)strUsername+ "]");
         }
-        public static void RemoveUser(TcpClient tcpUser)
-        {
-            if (htConnections[tcpUser] != null)
-            {
-                string nick = (string)htConnections[tcpUser];
-                htUsers.Remove(htConnections[tcpUser]);
-                htConnections.Remove(tcpUser);
-                foreach (var c in Lists.getConnectionByNick)
-                {
-                    if (c.Value.tcpClient == tcpUser)
-                    {
-                        Lists.removeConnection(c.Value);
-                        break;
-                    }
-                }
-                SendAdminMessage(nick+" disconnected.");
-            }
+        public static void RemoveUser (TcpClient tcpUser)
+		{
+			if (htConnections [tcpUser] != null) {
+				string nick = (string)htConnections [tcpUser];
+				htUsers.Remove (htConnections [tcpUser]);
+				htConnections.Remove (tcpUser);
+				foreach (var c in Lists.getConnectionByNick) {
+					if (c.Value.tcpClient == tcpUser) {
+						Lists.removeConnection (c.Value);
+						break;
+					}
+				}
+				SendAdminMessage (nick + " disconnected.");
+				Console.WriteLine ("Removing user [" + (string)nick + "]");
+			}
+			
         }
         public static void OnStatusChanged(StatusChangedEventArgs e)
         {
@@ -539,19 +537,19 @@ namespace DroneServer
 
             if (command == "MSG")
             {
-                DroneServer.OnCommand(Lists.MessageType.Message, currUser, message, commandArgs);
+                ChatServer.OnCommand(Lists.MessageType.Message, currUser, message, commandArgs);
             }
             else if (command == "ACTION")
             {
-                DroneServer.OnCommand(Lists.MessageType.Action, currUser, message, commandArgs);
+                ChatServer.OnCommand(Lists.MessageType.Action, currUser, message, commandArgs);
             }
             else if (command == "ADMIN")
             {
-                DroneServer.OnCommand(Lists.MessageType.AdminAction, currUser, message, commandArgs);
+                ChatServer.OnCommand(Lists.MessageType.AdminAction, currUser, message, commandArgs);
             }
             else if (command == "NOTICE")
             {
-                DroneServer.OnCommand(Lists.MessageType.Notice, currUser, message, commandArgs);
+                ChatServer.OnCommand(Lists.MessageType.Notice, currUser, message, commandArgs);
             }
         }
     }
