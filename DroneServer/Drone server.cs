@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using System.Collections;
-using System.Windows.Forms;
 
 namespace DroneServer
 {
@@ -322,7 +321,7 @@ namespace DroneServer
             if (messageType == Lists.MessageType.Message)
             {
                 if (Lists.OnlineAdmins.ContainsKey(nick))
-                    SendMessage(nick, "<" + nick + " (Admin)> " + message);
+                    SendMessage(nick, "<" + nick + " (M)> " + message);
                 else
                     SendMessage(nick, "<" + nick + "> " + message);
             }
@@ -389,7 +388,7 @@ namespace DroneServer
             tlsClient = new TcpListener(1986);
             tlsClient.Start();
             Lists.Admins.Add("Admin", "123987");
-            Lists.Admins.Add("user2", "password");
+            Lists.Admins.Add("user2", "password"); //sql look up if admin = 1
             Lists.Admins.Add("user3", "password");
             ServRunning = true;
             thrListener = new Thread(KeepListening);
@@ -540,19 +539,19 @@ namespace DroneServer
 
             if (command == "MSG")
             {
-                ChatServer.OnCommand(Lists.MessageType.Message, currUser, message, commandArgs);
+                DroneServer.OnCommand(Lists.MessageType.Message, currUser, message, commandArgs);
             }
             else if (command == "ACTION")
             {
-                ChatServer.OnCommand(Lists.MessageType.Action, currUser, message, commandArgs);
+                DroneServer.OnCommand(Lists.MessageType.Action, currUser, message, commandArgs);
             }
             else if (command == "ADMIN")
             {
-                ChatServer.OnCommand(Lists.MessageType.AdminAction, currUser, message, commandArgs);
+                DroneServer.OnCommand(Lists.MessageType.AdminAction, currUser, message, commandArgs);
             }
             else if (command == "NOTICE")
             {
-                ChatServer.OnCommand(Lists.MessageType.Notice, currUser, message, commandArgs);
+                DroneServer.OnCommand(Lists.MessageType.Notice, currUser, message, commandArgs);
             }
         }
     }

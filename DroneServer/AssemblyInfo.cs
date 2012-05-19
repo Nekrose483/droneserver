@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("DroneServer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Server for the Drone Control System")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Katja")]
+[assembly: AssemblyCompany("The Hive")]
+[assembly: AssemblyProduct("Drone Control System")]
+[assembly: AssemblyCopyright("Katja DeCuir & Enzo Lordini")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
