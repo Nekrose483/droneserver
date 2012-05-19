@@ -490,6 +490,9 @@ namespace DroneServer
                 }
                 else
                 {
+					//This seems just as good a place as any to compare login credentials
+					//to those stored in the data base
+					
                     hasConnectedYet = true;
                     ChatServer.AddUser(tcpClient, currUser, this);
                     swSender.WriteLine("1");
