@@ -157,24 +157,72 @@ namespace DroneServer
         public static Dictionary<string, Connection> getConnectionByNick = new Dictionary<string, Connection>();
         public static Dictionary<Connection, string> getNickByConnection = new Dictionary<Connection, string>();
         public static Dictionary<string, bool> mutedUsers = new Dictionary<string, bool>();
-        public static void addConnection(string nickname, Connection connect)
+		
+        public static void addConnectionDeprecated(string nickname, Connection connect)
         {
             getConnectionByNick.Add(nickname, connect);
             getNickByConnection.Add(connect, nickname);
         }
-        public static void removeConnection(Connection connect)
-        {
-            try
-            {
-                getConnectionByNick.Remove(getNickByConnection[connect]);
-                getNickByConnection.Remove(connect);
+		
+		public static void addConnection (string nick, string pass, string key, Connection con, bool admin)
+		{
+			UserList.Add (new UserData (nick,
+			                           pass,
+			                           key,
+			                           con,
+			                           admin)
+			);
+			
+			//The following lines may become obsolete in the future (the above line should take care of it)
+			getConnectionByNick.Add (nick, con);
+			getNickByConnection.Add (con, nick);
+		}
+		
+        public static void removeConnection (Connection connect)
+		{
+			try {
+				getConnectionByNick.Remove (getNickByConnection [connect]);
+				getNickByConnection.Remove (connect);
+				
+				for (int i = 0; i < UserList.Count - 1; i++) {
+					if (UserList [i].connection.GetHashCode() == connect.GetHashCode()) {
+						UserList.Remove (UserList [i]);
+					}
+				}
             }
             catch { }
         }
         public enum MessageType { Action, Message, PrivateMessage, AdminAction, Notice }
         public static Dictionary<string, string> Admins = new Dictionary<string, string>();
         public static Dictionary<string, Connection> OnlineAdmins = new Dictionary<string, Connection>();
+		public static List<UserData> UserList = new List<UserData> ();
     }
+	
+	public class UserData {
+		//This class will be used to store data particular for each user
+		// username, connection, password, and encryptionkey stuffs
+		// and anything else we need
+		public string username;
+		public string password;
+		public string key;
+		public Connection connection;
+		public bool admin;
+		public bool muted;
+		
+		public UserData (string username_,
+		                 string password_,
+		                 string key_,
+		                 Connection connection_,
+		                 bool admin_)
+		{
+			username = username_;
+			password = password_;
+			key = key_;
+			connection = connection_;
+			admin = admin_;
+		}
+	}
+	
     class ChatServer
     {
         public static Hashtable htUsers = new Hashtable(Options.maxConnections);
@@ -190,12 +238,13 @@ namespace DroneServer
         private Thread thrListener;
         private TcpListener tlsClient;
         bool ServRunning = false;
-        public static void AddUser (TcpClient tcpUser, string strUsername, Connection connect)
+        public static void AddUser (TcpClient tcpUser, string strUsername, string pass, string key, Connection connect, bool admin)
 		{
 			SendAdminMessage (strUsername + " connected.");
 			ChatServer.htUsers.Add (strUsername, tcpUser);
 			ChatServer.htConnections.Add (tcpUser, strUsername);
-			Lists.addConnection (strUsername, connect);
+			Lists.addConnection (strUsername, pass, key, connect, admin);
+			if (admin) Lists.OnlineAdmins.Add (strUsername, connect); //Add to admin list
 			Console.WriteLine ("Connecting user ["+ (string)strUsername+ "]");
         }
         public static void RemoveUser (TcpClient tcpUser)
@@ -333,6 +382,9 @@ namespace DroneServer
                 {
                     if (Lists.Admins[args[0]] == args[1])
                     {
+						//For some reason I don't entirely understand,
+						//we're adding people to the OnlineAdmins list here
+						// instead of during login
                         if (Lists.OnlineAdmins.ContainsKey(nick)){}
                         else
                         {
@@ -409,6 +461,8 @@ namespace DroneServer
         private StreamWriter swSender;
         public string currUser;
         public string currUserAdmin;
+		public string currPassword;
+		public string currKey;         			//for future encryption options
         private bool hasConnectedYet = false;
         private string strResponse;
         public Connection(TcpClient tcpCon)
@@ -453,48 +507,87 @@ namespace DroneServer
             swSender.WriteLine(rawMessage);
             swSender.Flush();
         }
-        private void AcceptClient()
-        {
-            srReceiver = new System.IO.StreamReader(tcpClient.GetStream());
-            swSender = new System.IO.StreamWriter(tcpClient.GetStream());
-            currUser = srReceiver.ReadLine();
-            if (currUser != "")
-            {
-                if (ChatServer.htUsers.Contains(currUser) == true)
-                {
-                    swSender.WriteLine("0|This nickname is in use.");
-                    swSender.Flush();
-                    CloseConnection();
-                    return;
-                }
-                else if (currUser.ToLower() == "administrator" || currUser.ToLower() == "server" || currUser.ToLower() == "console" || currUser.ToLower() == "owner" || currUser.ToLower() == "admin")
-                {
-                    swSender.WriteLine("0|This nickname is unavailable.");
-                    swSender.Flush();
-                    CloseConnection();
-                    return;
-                }
-                else if (isValidNickname(currUser) == false)
-                {
-                    swSender.WriteLine("0|This nickname contains invalid characters.");
-                    swSender.Flush();
-                    CloseConnection();
-                    return;
-                }
-                else if (currUser.Length > Options.maxCharictersInNickname)
-                {
-                    swSender.WriteLine("0|This nickname has too many characters.");
-                    swSender.Flush();
-                    CloseConnection();
-                    return;
-                }
-                else
-                {
+        private void AcceptClient ()
+		{
+			string loginstr;
+			srReceiver = new System.IO.StreamReader (tcpClient.GetStream ());
+			swSender = new System.IO.StreamWriter (tcpClient.GetStream ());
+			loginstr = srReceiver.ReadLine ();
+			List<string> splitArray = new List<string> (loginstr.Split (new char[] { ':' }));
+			
+			if (splitArray.Count != 3) {
+				//Login credentials should look like this <username>:<password>:<key>\n
+				//These error messages should be removed during production for security
+				//reasons
+				swSender.WriteLine ("0|Login credentials should take the following form:");
+				swSender.WriteLine ("0|<username>:<password>:<key>");
+				swSender.Flush ();
+				CloseConnection ();
+				return;
+			}
+			
+			currUser = splitArray [0];
+			currPassword = splitArray [1];
+			currKey = splitArray [2];
+			
+			//These values are arbitrary right now, we can fix them latr
+			if (currUser.Length <= 1 || currUser.Length >= 15) {
+				swSender.WriteLine ("0|Invalid username. ["+currUser+"]");
+				swSender.Flush ();
+				CloseConnection ();
+				return;
+			} else if (currPassword.Length <= 1 || currPassword.Length >= 15) {
+				swSender.WriteLine ("0|Invalid username.");
+				swSender.Flush ();
+				CloseConnection ();
+				return;
+			} else if (currKey.Length <= 1 || currKey.Length >= 30) {
+				swSender.WriteLine ("0|Invalid key.");
+				swSender.Flush ();
+				CloseConnection ();
+				return;
+			}
+			
+			splitArray.RemoveAt (0); //I think we can ditch this
+			//currUser = srReceiver.ReadLine();
+			
+			if (currUser != "") {
+				if (ChatServer.htUsers.Contains (currUser) == true) {
+					swSender.WriteLine ("0|This nickname is in use.");
+					swSender.Flush ();
+					CloseConnection ();
+					return;
+				} /*else if (currUser.ToLower () == "administrator" || currUser.ToLower () == "server" || currUser.ToLower () == "console" || currUser.ToLower () == "owner" || currUser.ToLower () == "admin") {
+					swSender.WriteLine ("0|This nickname is unavailable.");
+					swSender.Flush ();
+					CloseConnection ();
+					return;
+				} */else if (isValidNickname (currUser) == false) {
+					swSender.WriteLine ("0|This nickname contains invalid characters.");
+					swSender.Flush ();
+					CloseConnection ();
+					return;
+				} else if (currUser.Length > Options.maxCharictersInNickname) {
+					swSender.WriteLine ("0|This nickname has too many characters.");
+					swSender.Flush ();
+					CloseConnection ();
+					return;
+				} else {
 					//This seems just as good a place as any to compare login credentials
 					//to those stored in the data base
-					
-                    hasConnectedYet = true;
-                    ChatServer.AddUser(tcpClient, currUser, this);
+					bool isAdmin = false;
+					if (Lists.Admins.ContainsKey (currUser)) {
+						if (Lists.Admins [currUser] == currPassword)
+							isAdmin = true;
+						else {
+							swSender.WriteLine ("0|Invalid username or password.");
+							swSender.Flush ();
+							CloseConnection ();
+							return;
+						}
+					}
+					hasConnectedYet = true;
+					ChatServer.AddUser (tcpClient, currUser, currPassword, currKey, this, isAdmin);
                     swSender.WriteLine("1");
                     swSender.Flush();
                     swSender.WriteLine("Welcome To The Network. Make Sure You Don't Spam");
