@@ -14,7 +14,6 @@ namespace DroneServer
 		private delegate void UpdateStatusCallback(string strMessage);
 		public static void Main (string[] args)
 		{
-			//how do you keep it up and running?
 			IPAddress ipAddr = IPAddress.Parse ("127.0.0.1");
 			ChatServer mainServer = new ChatServer (ipAddr);
 			//   ChatServer.StatusChanged += new StatusChangedEventHandler(mainServer_StatusChanged);
