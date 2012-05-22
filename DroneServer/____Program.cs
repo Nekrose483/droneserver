@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace ChatServer
 {
+	/*
     static class Program
     {
         /// <summary>
@@ -17,4 +18,5 @@ namespace ChatServer
             Application.Run(new Form1());
         }
     }
+    */
 }

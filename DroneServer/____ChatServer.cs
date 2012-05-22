@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using System.Collections;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace ChatServer
 {

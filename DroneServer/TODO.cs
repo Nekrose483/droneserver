@@ -106,8 +106,8 @@
 00:17 <auroriumoxide> those are unneeded
 00:18 <auroriumoxide> ok. in Drone server.cs
 00:18 <auroriumoxide> there are a few classes
-00:18 <auroriumoxide> Options
-00:18 <auroriumoxide> AdminTools
+00:18 <auroriumoxide> Options						[moved to DSConstants]
+00:18 <auroriumoxide> AdminTools					[done]
 00:19 <auroriumoxide> StatusChangedEventArgs
 00:19 <auroriumoxide> Lists
 00:19 <auroriumoxide> UserData

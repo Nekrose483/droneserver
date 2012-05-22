@@ -51,6 +51,7 @@
     <Compile Include="____Form1.cs" />
     <Compile Include="____Program.cs" />
     <Compile Include="DSConstants.cs" />
+    <Compile Include="AdminTools.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

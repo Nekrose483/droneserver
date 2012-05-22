@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+//using System.Drawing;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
@@ -15,18 +15,20 @@ using System.IO;
 
 namespace ChatServer
 {
-    public partial class Form1 : Form
-    {
+    /*public partial class Form1 : Form
+	{
         private delegate void UpdateStatusCallback(string strMessage);
         public Form1()
         {
             InitializeComponent();
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
         }
+		
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Environment.Exit(0);
         }
+        
         private void btnListen_Click(object sender, EventArgs e)
         {
             IPAddress ipAddr = IPAddress.Parse(txtIp.Text);
@@ -118,4 +120,5 @@ namespace ChatServer
         }
 
     }
+*/
 }
