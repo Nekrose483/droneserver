@@ -3,14 +3,15 @@ namespace DroneServer
 {
 	public class DSConstants
 	{
+		//Network Constants
 		public static int maxConnections = 100;
-        	
-		//all the accepted charicters that can be in a nickname
 	    public static string acceptedNicknameCharicters =@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_\[]{}^";
-        	
-		//self explainitory
         public static int maxCharictersInNickname = 10;
 	
+		//Database Constants
+		public string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
+		public string tblUser = "user";  //I don't know if we really want to go here
+		
 		public DSConstants ()
 		{
 			

@@ -22,6 +22,7 @@ namespace DroneServer
 			
 			while (1 == 1) { } //Main loop
 		}
+		/*
 		public void mainServer_StatusChanged(object sender, StatusChangedEventArgs e)
         {
            // this.Invoke(new UpdateStatusCallback(this.UpdateStatus), new object[] { e.EventMessage });
@@ -30,5 +31,6 @@ namespace DroneServer
         {
            // txtLog.AppendText(strMessage + "\r\n");
         }
+        */
 	}
 }

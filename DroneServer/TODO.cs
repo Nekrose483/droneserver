@@ -108,11 +108,11 @@
 00:18 <auroriumoxide> there are a few classes
 00:18 <auroriumoxide> Options						[moved to DSConstants]
 00:18 <auroriumoxide> AdminTools					[done]
-00:19 <auroriumoxide> StatusChangedEventArgs
-00:19 <auroriumoxide> Lists
-00:19 <auroriumoxide> UserData
-00:19 <auroriumoxide> Server
-00:20 <auroriumoxide> Connection
+00:19 <auroriumoxide> StatusChangedEventArgs		[deleted]
+00:19 <auroriumoxide> Lists							[done]
+00:19 <auroriumoxide> UserData						[done]
+00:19 <auroriumoxide> Server						[done]
+00:20 <auroriumoxide> Connection					[done]
 00:20 <auroriumoxide> and thats it
 00:20 <auroriumoxide> i want those all in separate files
 00:20 <auroriumoxide> just to clean up stuff

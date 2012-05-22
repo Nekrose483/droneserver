@@ -43,15 +43,18 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Drone server.cs" />
     <Compile Include="TODO.cs" />
     <Compile Include="MysqlDB.cs" />
-    <Compile Include="ChatServer.cs" />
     <Compile Include="____ChatServer.cs" />
     <Compile Include="____Form1.cs" />
     <Compile Include="____Program.cs" />
     <Compile Include="DSConstants.cs" />
     <Compile Include="AdminTools.cs" />
+    <Compile Include="Lists.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="Server.ChatServer.cs" />
+    <Compile Include="Server.UserData.cs" />
+    <Compile Include="Server.Connection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

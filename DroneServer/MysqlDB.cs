@@ -10,8 +10,7 @@ namespace DroneServer
 		
 		public MysqlDB ()
 		{
-			string connStr = "server=localhost;user=root;database=test;port=3306;password=motion;";
-			conn = new MySqlConnection (connStr);
+			conn = new MySqlConnection (DSConstants.DBConnectionString);
 			try {
 				conn.Open ();
 			} catch (Exception ex) {
@@ -22,7 +21,8 @@ namespace DroneServer
 		public void query ()
 		{
 			try {
-				string sql = "SELECT * FROM user";
+				string sql = "SELECT * FROM " + DSConstants.tblUser;
+				
 				MySqlCommand cmd = new MySqlCommand (sql, conn);
 
 				//Console.WriteLine ("Enter a continent e.g. 'North America', 'Europe': ");
@@ -46,7 +46,7 @@ namespace DroneServer
 			UserData retUser = null;
 			
 			try {
-				string sql = "SELECT * FROM user WHERE username=@Username AND hashed_password=sha1(@Password)";
+				string sql = "SELECT * FROM " + DSConstants.tblUser + " WHERE username=@Username AND hashed_password=sha1(@Password)";
 				MySqlCommand cmd = new MySqlCommand (sql, conn);
 
 				cmd.Parameters.AddWithValue ("@Username", username);
@@ -78,6 +78,12 @@ namespace DroneServer
 			}
 			return null;
 		}
+		
+		//Prototype DB functions
+		public bool setMuteUser(UserData commander, string targetUserName, bool muteStatus) {}
+		public string getUserInfo(UserData commander, string targetUserName) {}
+		public string getUserList(UserData commander) {}
+		
 		
 		public void close ()
 		{
