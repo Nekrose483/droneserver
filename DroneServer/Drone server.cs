@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 
+
 namespace DroneServer
 {
 //AdminTools, and Server options. v
@@ -50,14 +51,14 @@ namespace DroneServer
             }
             if (Lists.mutedUsers.ContainsKey(nIck))
             {
-                ChatServer.SendAdminMessage(nIck + " has been muted by "+adminNick);
+                ChatServer.SendAdminMessage("MSG:SERVER: " + nIck + " has been muted by "+adminNick);
                 Lists.mutedUsers[nIck] = true;
             }
             else
             {
-                if (ChatServer.htUsers.ContainsKey(nIck))
+                if (Server.htUsers.ContainsKey(nIck))
                 {
-                    ChatServer.SendAdminMessage(nIck + " has been muted by " + adminNick);
+                    ChatServer.SendAdminMessage("MSG:SERVER: "+nIck + " has been muted by " + adminNick);
                     Lists.mutedUsers.Add(nIck, true);
                 }
             }
@@ -75,12 +76,12 @@ namespace DroneServer
             }
             if (Lists.mutedUsers.ContainsKey(nIck))
             {
-                ChatServer.SendAdminMessage(nIck + " has been unmuted by  " + adminNick);
+                ChatServer.SendAdminMessage("MSG:SERVER: "+nIck + " has been unmuted by  " + adminNick);
                 Lists.mutedUsers.Remove(nIck);
             }
             else
             {
-                Lists.getConnectionByNick[adminNick].sendMessageToUser("---The Nickname Isnt Muted");
+                Lists.getConnectionByNick[adminNick].sendMessageToUser("MSG:SERVER: ---The Nickname "+nick+" Isnt Muted");
             }
         }
         //just another version of SendAdminMessage
@@ -97,8 +98,11 @@ namespace DroneServer
         //mimic any nickname on the network (or a non existant one)
         public static void mimicUser(string nickToMimic, string message)
         {
+			//broken for now
+			/*
             string[] args = { };
             ChatServer.OnCommand(Lists.MessageType.Message, "Administrator", "<" + nickToMimic + "> " + message, args);
+            */
         }
         //msg all online admins
         public static void msgAllOnlineAdmins(string message)
@@ -164,18 +168,20 @@ namespace DroneServer
             getNickByConnection.Add(connect, nickname);
         }
 		
-		public static void addConnection (string nick, string pass, string key, Connection con, bool admin)
+		public static void addConnectedUser (UserData newuser)
 		{
-			UserList.Add (new UserData (nick,
-			                           pass,
-			                           key,
-			                           con,
-			                           admin)
+			UserList.Add (new UserData (newuser.username,
+			                           newuser.password,
+			                           newuser.key,
+			                           newuser.tcpUser,
+			                           newuser.connection,
+			                           newuser.admin,
+			                           newuser.muted)
 			);
 			
 			//The following lines may become obsolete in the future (the above line should take care of it)
-			getConnectionByNick.Add (nick, con);
-			getNickByConnection.Add (con, nick);
+			getConnectionByNick.Add (newuser.username, newuser.connection);
+			getNickByConnection.Add (newuser.connection, newuser.username);
 		}
 		
         public static void removeConnection (Connection connect)
@@ -206,47 +212,76 @@ namespace DroneServer
 		public string password;
 		public string key;
 		public Connection connection;
+		public TcpClient tcpUser;
 		public bool admin;
 		public bool muted;
+		
 		
 		public UserData (string username_,
 		                 string password_,
 		                 string key_,
+		                 TcpClient tcpUser_,
 		                 Connection connection_,
-		                 bool admin_)
+		                 bool admin_,
+		                 bool muted_)
 		{
 			username = username_;
 			password = password_;
 			key = key_;
+			tcpUser = tcpUser_;
 			connection = connection_;
 			admin = admin_;
+			muted = muted_;
 		}
 	}
 	
-    class ChatServer
-    {
-        public static Hashtable htUsers = new Hashtable(Options.maxConnections);
+	class Server
+	{
+		public static Hashtable htUsers = new Hashtable(Options.maxConnections);
         public static Hashtable htConnections = new Hashtable(Options.maxConnections);
         private IPAddress ipAddress;
         private TcpClient tcpClient;
-        public static event StatusChangedEventHandler StatusChanged;
-        private static StatusChangedEventArgs e;
-        public ChatServer(IPAddress address)
-        {
-            ipAddress = address;
+        //public static event StatusChangedEventHandler StatusChanged;
+        //private static StatusChangedEventArgs e;
+		public static MysqlDB sqldb;
+		public static ChatServer chatserver;
+		
+        public Server (IPAddress address)
+		{
+			ipAddress = address;
+			sqldb = new MysqlDB ();
+			sqldb.query ();
+			ChatServer chatserver = new ChatServer (this);
+			//sqldb.close (); <-- we should only do this before we shut down, but i'm not sure how to capture that
         }
         private Thread thrListener;
         private TcpListener tlsClient;
         bool ServRunning = false;
-        public static void AddUser (TcpClient tcpUser, string strUsername, string pass, string key, Connection connect, bool admin)
+		
+		public static void AddUser (TcpClient tcpUser, string strUsername, string pass, string key, Connection connect, bool admin)
 		{
-			SendAdminMessage (strUsername + " connected.");
-			ChatServer.htUsers.Add (strUsername, tcpUser);
-			ChatServer.htConnections.Add (tcpUser, strUsername);
-			Lists.addConnection (strUsername, pass, key, connect, admin);
+			//deprecated
+			ChatServer.SendAdminMessage ((string)"MSG:SERVER: "+strUsername + " connected.");
+			htUsers.Add (strUsername, tcpUser);
+			htConnections.Add (tcpUser, strUsername);
+			//Lists.addConnection (strUsername, pass, key, connect, admin);
 			if (admin) Lists.OnlineAdmins.Add (strUsername, connect); //Add to admin list
 			Console.WriteLine ("Connecting user ["+ (string)strUsername+ "]");
         }
+		
+		public static void AddUser (UserData newuser)
+		{
+			ChatServer.SendAdminMessage ("MSG:SERVER: "+newuser.username + " connected.");
+			Lists.addConnectedUser (newuser);
+			
+			//For how much longer do we need these 3 lines?
+			htUsers.Add (newuser.username, newuser.tcpUser);
+			htConnections.Add (newuser.tcpUser, newuser.username);
+			if (newuser.admin)
+				Lists.OnlineAdmins.Add (newuser.username, newuser.connection); //Add to admin list
+			
+			Console.WriteLine ("Connecting user [" + (string)newuser.username + "]");
+		}
         public static void RemoveUser (TcpClient tcpUser)
 		{
 			if (htConnections [tcpUser] != null) {
@@ -259,150 +294,47 @@ namespace DroneServer
 						break;
 					}
 				}
-				SendAdminMessage (nick + " disconnected.");
+				ChatServer.SendAdminMessage ("MSG:SERVER: " + nick + " disconnected.");
 				Console.WriteLine ("Removing user [" + (string)nick + "]");
 			}
 			
         }
-        public static void OnStatusChanged(StatusChangedEventArgs e)
-        {
-            StatusChangedEventHandler statusHandler = StatusChanged;
-            if (statusHandler != null)
-            {
-                statusHandler(null, e);
-            }
-        }
-        public static void SendAdminMessage(string Message)
-        {
-            StreamWriter swSenderSender;
-            e = new StatusChangedEventArgs("--- " + Message);
-            OnStatusChanged(e);
-            TcpClient[] tcpClients = new TcpClient[ChatServer.htUsers.Count];
-            ChatServer.htUsers.Values.CopyTo(tcpClients, 0);
-            for (int i = 0; i < tcpClients.Length; i++)
-            {
-                try
-                {
-                    if (Message.Trim() == "" || tcpClients[i] == null)
-                    {
-                        continue;
-                    }
-                    swSenderSender = new StreamWriter(tcpClients[i].GetStream());
-                    swSenderSender.WriteLine("--- " + Message);
-                    swSenderSender.Flush();
-                    swSenderSender = null;
-                }
-                catch
-                {
-                    RemoveUser(tcpClients[i]);
-                }
-            }
-        }
-        private static bool isMuted(string nickname)
-        {
-            if (Lists.mutedUsers.ContainsKey(nickname))
-            {
-                if (Lists.mutedUsers[nickname] == true)
-                {
-                    if (htUsers.ContainsKey(nickname))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        Lists.mutedUsers.Remove(nickname);
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        private static void SendMessage(string From, string Message)
-        {
-            if (isMuted(From))
-            {
-                if (Lists.getConnectionByNick.ContainsKey(From))
-                {
-                    Lists.getConnectionByNick[From].sendMessageToUser("You are muted, so you cannot talk.");
-                    e = new StatusChangedEventArgs("Muted user> " + Message);
-                    OnStatusChanged(e);
-                    AdminTools.msgAllOnlineAdmins("Muted user> " + Message);
-                }
-            }
-            else
-            {
-                StreamWriter swSenderSender;
-                e = new StatusChangedEventArgs(Message);
-                OnStatusChanged(e);
-                TcpClient[] tcpClients = new TcpClient[ChatServer.htUsers.Count];
-                ChatServer.htUsers.Values.CopyTo(tcpClients, 0);
-                for (int i = 0; i < tcpClients.Length; i++)
-                {
-                    try
-                    {
-                        if (Message.Trim() == "" || tcpClients[i] == null)
-                        {
-                            continue;
-                        }
-                        swSenderSender = new StreamWriter(tcpClients[i].GetStream());
-                        swSenderSender.WriteLine(Message);
-                        swSenderSender.Flush();
-                        swSenderSender = null;
-                    }
-                    catch
-                    {
-                        RemoveUser(tcpClients[i]);
-                    }
-                }
-            }
-        }
-        public static void OnCommand(Lists.MessageType messageType, string nick, string message, string[] args)
-        {
-            if (messageType == Lists.MessageType.Message)
-            {
-                if (Lists.OnlineAdmins.ContainsKey(nick))
-                    SendMessage(nick, "<" + nick + " (M)> " + message);
-                else
-                    SendMessage(nick, "<" + nick + "> " + message);
-            }
-            else if (messageType == Lists.MessageType.Action)
-            {
-                SendMessage(nick, "* " + nick + " " + message);
-            }
-            else if (messageType == Lists.MessageType.AdminAction)
-            {
-                if(Lists.Admins.ContainsKey(args[0]))
-                {
-                    if (Lists.Admins[args[0]] == args[1])
-                    {
-						//For some reason I don't entirely understand,
-						//we're adding people to the OnlineAdmins list here
-						// instead of during login
-                        if (Lists.OnlineAdmins.ContainsKey(nick)){}
-                        else
-                        {
-                            Lists.getConnectionByNick[nick].sendMessageToUser("---You have successfully logged in as "+args[0]);
-                            SendAdminMessage("Room Admin " + args[0] + " now online (" + nick + ")");
-                            Lists.OnlineAdmins.Add(nick, Lists.getConnectionByNick[nick]);
-                            Lists.getConnectionByNick[nick].currUserAdmin = args[0];
-                        }
-                        AdminAction(nick, message, args);
-                        return;
-                    }
-                }
-                Lists.getConnectionByNick[nick].sendMessageToUser("---Login Incorrect");
-                AdminTools.msgAllOnlineAdmins("Failed Administrative Login by " + nick + " using user '" + args[0] + "'.");
-            }
-            else if (messageType == Lists.MessageType.Notice)
-            {
-                SendMessage(nick, "* " + nick + ": " + message+" *");
+		public static void OnCommand (Lists.MessageType messageType, UserData user, string message, string[] args)
+		{
+			if (messageType == Lists.MessageType.Message) { //move this to sendmessage
+             
+				string adminflag = "";
+					
+				if (user.admin)
+					adminflag = " (M)";
+						
+				ChatServer.SendChatMessage (user, "MSG:" + user.username + adminflag + ":" + message);
+				
+			} else if (messageType == Lists.MessageType.Action) {
+				
+				string adminflag = "";
+					
+				if (user.admin)
+					adminflag = " (M)";
+						
+				ChatServer.SendChatMessage (user, "MSG:* " + user.username + adminflag + " " + message);
+				
+			} else if (messageType == Lists.MessageType.AdminAction) {
+				
+				if (user.admin)
+					AdminAction (user.username, message, args);
+				else {
+					user.connection.sendMessageToUser ("MSG:SERVER: Command not available. You are not an admin.");
+					AdminTools.msgAllOnlineAdmins ("MSG:SERVER: Failed Admin Command by " + user.username + " using user '" + args [0] + "'.");
+				}
+				
+			} else if (messageType == Lists.MessageType.Notice) {
+				string adminflag = "";
+					
+				if (user.admin)
+					adminflag = " (M)";
+				
+                ChatServer.SendChatMessage(user, "* " + user.username + adminflag + ": " + message+" *");
             }
         }
         private static void AdminAction(string adminNick, string action, string[] args)
@@ -437,9 +369,12 @@ namespace DroneServer
             IPAddress ipaLocal = ipAddress;
             tlsClient = new TcpListener(1986);
             tlsClient.Start();
+			/*
+			 * Deprecated since transition to mysql db
             Lists.Admins.Add("Admin", "123987");
             Lists.Admins.Add("user2", "password"); //sql look up if admin = 1
             Lists.Admins.Add("user3", "password");
+            */
             ServRunning = true;
             thrListener = new Thread(KeepListening);
             thrListener.Start();
@@ -452,7 +387,9 @@ namespace DroneServer
                 Connection newConnection = new Connection(tcpClient);
             }
         }
-    }
+	}
+	
+    
     public class Connection
     {
         public TcpClient tcpClient;
@@ -463,8 +400,10 @@ namespace DroneServer
         public string currUserAdmin;
 		public string currPassword;
 		public string currKey;         			//for future encryption options
+		public UserData user;					//use this throughout, so we can deprecate the above stuff
         private bool hasConnectedYet = false;
         private string strResponse;
+		
         public Connection(TcpClient tcpCon)
         {
             tcpClient = tcpCon;
@@ -478,9 +417,9 @@ namespace DroneServer
                 if (Lists.OnlineAdmins.ContainsKey(currUser))
                 {
                     Lists.OnlineAdmins.Remove(currUser);
-                    ChatServer.SendAdminMessage("Room Admin " + currUser + " Left and Logged Out");
+                    ChatServer.SendAdminMessage("MSG:SERVER: Room Admin " + currUser + " Left and Logged Out");
                 }
-                ChatServer.RemoveUser(tcpClient);
+                Server.RemoveUser(tcpClient);
             }
             tcpClient.Close();
             srReceiver.Close();
@@ -532,12 +471,12 @@ namespace DroneServer
 			
 			//These values are arbitrary right now, we can fix them latr
 			if (currUser.Length <= 1 || currUser.Length >= 15) {
-				swSender.WriteLine ("0|Invalid username. ["+currUser+"]");
+				swSender.WriteLine ("0|Invalid username. [" + currUser + "]");
 				swSender.Flush ();
 				CloseConnection ();
 				return;
 			} else if (currPassword.Length <= 1 || currPassword.Length >= 15) {
-				swSender.WriteLine ("0|Invalid username.");
+				swSender.WriteLine ("0|Invalid password.");
 				swSender.Flush ();
 				CloseConnection ();
 				return;
@@ -552,7 +491,7 @@ namespace DroneServer
 			//currUser = srReceiver.ReadLine();
 			
 			if (currUser != "") {
-				if (ChatServer.htUsers.Contains (currUser) == true) {
+				if (Server.htUsers.Contains (currUser) == true) {
 					swSender.WriteLine ("0|This nickname is in use.");
 					swSender.Flush ();
 					CloseConnection ();
@@ -562,7 +501,7 @@ namespace DroneServer
 					swSender.Flush ();
 					CloseConnection ();
 					return;
-				} */else if (isValidNickname (currUser) == false) {
+				} */ else if (isValidNickname (currUser) == false) {
 					swSender.WriteLine ("0|This nickname contains invalid characters.");
 					swSender.Flush ();
 					CloseConnection ();
@@ -575,6 +514,16 @@ namespace DroneServer
 				} else {
 					//This seems just as good a place as any to compare login credentials
 					//to those stored in the data base
+					
+					UserData loginAttempt = Server.sqldb.authenticateUser (currUser, currPassword);
+					if (loginAttempt == null) {
+						swSender.WriteLine ("0|Invalid username or password.");
+						swSender.Flush ();
+						CloseConnection ();
+						return;
+					}
+					
+					/*  Deprecated admin login check
 					bool isAdmin = false;
 					if (Lists.Admins.ContainsKey (currUser)) {
 						if (Lists.Admins [currUser] == currPassword)
@@ -586,8 +535,13 @@ namespace DroneServer
 							return;
 						}
 					}
+					*/
+					loginAttempt.tcpUser = tcpClient;
+					loginAttempt.connection = this;
+					user = loginAttempt;
+					
 					hasConnectedYet = true;
-					ChatServer.AddUser (tcpClient, currUser, currPassword, currKey, this, isAdmin);
+					Server.AddUser (loginAttempt);
                     swSender.WriteLine("1");
                     swSender.Flush();
                     swSender.WriteLine("Welcome To The Network. Make Sure You Don't Spam");
@@ -633,19 +587,19 @@ namespace DroneServer
 
             if (command == "MSG")
             {
-                ChatServer.OnCommand(Lists.MessageType.Message, currUser, message, commandArgs);
+                Server.OnCommand(Lists.MessageType.Message, user, message, commandArgs);
             }
             else if (command == "ACTION")
             {
-                ChatServer.OnCommand(Lists.MessageType.Action, currUser, message, commandArgs);
+                Server.OnCommand(Lists.MessageType.Action, user, message, commandArgs);
             }
             else if (command == "ADMIN")
             {
-                ChatServer.OnCommand(Lists.MessageType.AdminAction, currUser, message, commandArgs);
+                Server.OnCommand(Lists.MessageType.AdminAction, user, message, commandArgs);
             }
             else if (command == "NOTICE")
             {
-                ChatServer.OnCommand(Lists.MessageType.Notice, currUser, message, commandArgs);
+                Server.OnCommand(Lists.MessageType.Notice, user, message, commandArgs);
             }
         }
     }
