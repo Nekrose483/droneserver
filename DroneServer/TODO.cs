@@ -97,7 +97,43 @@
     else ci.Send(text);
   }
 }
- * 
+ * 00:16 <auroriumoxide> its ok
+00:16 <auroriumoxide> i can change them
+00:16 <auroriumoxide> in understand that code ^^
+00:17 <auroriumoxide> oh, and you can remove the mainServer_StatusChanged()
+00:17 <auroriumoxide> and UpdateStatus()
+00:17 <auroriumoxide> in Main.cs
+00:17 <auroriumoxide> those are unneeded
+00:18 <auroriumoxide> ok. in Drone server.cs
+00:18 <auroriumoxide> there are a few classes
+00:18 <auroriumoxide> Options
+00:18 <auroriumoxide> AdminTools
+00:19 <auroriumoxide> StatusChangedEventArgs
+00:19 <auroriumoxide> Lists
+00:19 <auroriumoxide> UserData
+00:19 <auroriumoxide> Server
+00:20 <auroriumoxide> Connection
+00:20 <auroriumoxide> and thats it
+00:20 <auroriumoxide> i want those all in separate files
+00:20 <auroriumoxide> just to clean up stuff
+00:21 <auroriumoxide> i'm a bit dislexic.. so it's much easier for me to keep track of things when they are all sorted
+00:21 <auroriumoxide> i'm sorry to push my disability on you.. but it will also make life much easier when we come to update the program with new code
+00:21 <auroriumoxide> making the program "modular" is a very nice thing
+00:21 <enzo> heh naw, it's no problem
+00:22 <auroriumoxide> plus i think it's just a good skill to have over all
+00:22 <enzo> i'll do it, though I may not be able to do another push until tomorrow
+00:22 <auroriumoxide> keeping code clean and modular
+00:22 <auroriumoxide> it's perfectly fine
+00:22 <auroriumoxide> ^^
+00:22 <enzo> Server and Connection seemed pretty related
+00:22 <auroriumoxide> you've done a very good job
+00:22 <enzo> but, I"ll separate them if you like
+00:23 <auroriumoxide> yes, separate them. later, if we both feel the need, they can always be combined
+00:23 <enzo> true that
+00:23 <auroriumoxide> and see if you can't start putting variables in the DSConstants.cs file
+00:24 <auroriumoxide> it will make life easier to get in that habbit early in the game
+00:24 <enzo> right
+
  * 
  * 
  * 
