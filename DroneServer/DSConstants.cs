@@ -9,8 +9,8 @@ namespace DroneServer
         public static int maxCharictersInNickname = 10;
 	
 		//Database Constants
-		public string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
-		public string tblUser = "user";  //I don't know if we really want to go here
+		public static string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
+		public static string tblUser = "user";  //I don't know if we really want to go here
 		
 		public DSConstants ()
 		{

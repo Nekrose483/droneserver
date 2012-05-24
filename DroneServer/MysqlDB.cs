@@ -79,10 +79,36 @@ namespace DroneServer
 			return null;
 		}
 		
-		//Prototype DB functions
-		public bool setMuteUser(UserData commander, string targetUserName, bool muteStatus) {}
-		public string getUserInfo(UserData commander, string targetUserName) {}
-		public string getUserList(UserData commander) {}
+		//some Prototype DB functions
+		//public bool setMuteUser(UserData commander, string targetUserName, bool muteStatus) {}
+		//public string getUserInfo(UserData commander, string targetUserName) {}
+		public string getUserList (UserData commander)
+		{
+			string ret = "";
+			
+			try {
+				string sql = "SELECT * FROM " + DSConstants.tblUser;
+				
+				MySqlCommand cmd = new MySqlCommand (sql, conn);
+				MySqlDataReader rdr = cmd.ExecuteReader ();
+
+				while (rdr.Read()) {
+					string adminStr = "";
+					if ((int)rdr ["admin"] == 1)
+						adminStr = "(M)";
+					
+					//I'm not really sure how to format this
+					//It occurs to me that it might be easier to format data in xml
+					//assuming mono has functions for parsing xml
+					ret += "MSG:SERVER: " + (string)rdr ["username"] + adminStr + "\n";
+				}
+				rdr.Close ();
+			} catch (Exception ex) {
+				ret += "MSG:SERVER: " + ex.ToString ();
+			}
+			return ret;
+		}
+		//public bool modifyUserProfile(UserData commander, string targetUserName, string column, string value) {}
 		
 		
 		public void close ()

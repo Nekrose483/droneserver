@@ -55,6 +55,7 @@
     <Compile Include="Server.ChatServer.cs" />
     <Compile Include="Server.UserData.cs" />
     <Compile Include="Server.Connection.cs" />
+    <Compile Include="XML.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

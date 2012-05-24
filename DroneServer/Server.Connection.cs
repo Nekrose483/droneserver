@@ -192,33 +192,61 @@ namespace DroneServer {
                 CloseConnection();
             }
         }
-        private void ProcessMessage(string rawMessage)
-        {
-            List<string> splitArray = new List<string>(rawMessage.Split(new char[] { ':' }));
-            string command = splitArray[0];
-            splitArray.RemoveAt(0);
-            string message = String.Join(":", splitArray.ToArray());
-            splitArray = new List<string>(command.Split(new char[] { ' ' }));
-            command = splitArray[0];
-            splitArray.RemoveAt(0);
-            string[] commandArgs = splitArray.ToArray();
+        private void ProcessMessage (string rawMessage)
+		{
+			List<string> splitArray = new List<string> (rawMessage.Split (new char[] { ':' }));
+			string command = splitArray [0];
+			splitArray.RemoveAt (0);
+			string message = String.Join (":", splitArray.ToArray ());
+			splitArray = new List<string> (command.Split (new char[] { ' ' }));
+			command = splitArray [0];
+			splitArray.RemoveAt (0);
+			string[] commandArgs = splitArray.ToArray ();
 
-            if (command == "MSG")
-            {
-                Server.OnCommand(Lists.MessageType.Message, user, message, commandArgs);
-            }
-            else if (command == "ACTION")
-            {
-                Server.OnCommand(Lists.MessageType.Action, user, message, commandArgs);
-            }
-            else if (command == "ADMIN")
-            {
-                Server.OnCommand(Lists.MessageType.AdminAction, user, message, commandArgs);
-            }
-            else if (command == "NOTICE")
-            {
-                Server.OnCommand(Lists.MessageType.Notice, user, message, commandArgs);
-            }
+			if (command == "MSG") {
+				Server.OnCommand (Lists.MessageType.Message, user, message, commandArgs);
+			} else if (command == "ACTION") {
+				Server.OnCommand (Lists.MessageType.Action, user, message, commandArgs);
+			} else if (command == "ADMIN") {
+				Server.OnCommand (Lists.MessageType.AdminAction, user, message, commandArgs);
+			} else if (command == "NOTICE") {
+				Server.OnCommand (Lists.MessageType.Notice, user, message, commandArgs);
+			} else if (command == "XMLTEST") {
+				
+				//this is just a test of the xml generator
+				string xmlstr = "";
+				XMLNode rootnode = new XMLNode (null, "root", "");
+				
+				rootnode.childNodes.Add (new XMLNode (rootnode, "child1", "1"));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "child2", "2"));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "child3", ""));
+
+				rootnode.lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild (), "subchild1", "1")
+				);
+				rootnode.lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild (), "subchild2", "2")
+				);
+				rootnode.lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild (), "subchild3", "3")
+				);
+				
+				rootnode.lastChild ().lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild ().lastChild (), "supersub1", "1")
+				);
+				rootnode.lastChild ().lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild ().lastChild (), "supersub2", "2")
+				);
+				
+				rootnode.lastChild ().childNodes.Add (
+					new XMLNode (rootnode.lastChild (), "subchild4", "4")
+				);
+					
+				
+				xmlstr = rootnode.makeXMLString ();
+				
+				ChatServer.SendChatMessage (user, "MSG:* " + user.username + " " + xmlstr);
+			}
         }
     }
 }
