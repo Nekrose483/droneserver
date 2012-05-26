@@ -39,6 +39,7 @@
     <Reference Include="MySql.Data">
       <HintPath>mysql.data.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Server.UserData.cs" />
     <Compile Include="Server.Connection.cs" />
     <Compile Include="XML.cs" />
+    <Compile Include="Crypto.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

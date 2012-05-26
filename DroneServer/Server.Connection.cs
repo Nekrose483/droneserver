@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using System.Collections;
+using System.Xml;
+
 
 namespace DroneServer {
 	public class Connection
@@ -215,12 +217,15 @@ namespace DroneServer {
 				
 				//this is just a test of the xml generator
 				string xmlstr = "";
-				XMLNode rootnode = new XMLNode (null, "root", "");
+				string jsonstr = "";
+				XMLNode rootnode = new XMLNode (null, "clientmsg", "");
 				
-				rootnode.childNodes.Add (new XMLNode (rootnode, "child1", "1"));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "child2", "2"));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "child3", ""));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "type", "chat"));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "room", "0"));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "to", "0"));
+				rootnode.childNodes.Add (new XMLNode (rootnode, "message", "wacka flacka"));
 
+				/*
 				rootnode.lastChild ().childNodes.Add (
 					new XMLNode (rootnode.lastChild (), "subchild1", "1")
 				);
@@ -241,11 +246,15 @@ namespace DroneServer {
 				rootnode.lastChild ().childNodes.Add (
 					new XMLNode (rootnode.lastChild (), "subchild4", "4")
 				);
-					
+				*/
 				
+				jsonstr = rootnode.makeJSONString ();
 				xmlstr = rootnode.makeXMLString ();
+				rootnode.parseXML (xmlstr);
+				
 				
 				ChatServer.SendChatMessage (user, "MSG:* " + user.username + " " + xmlstr);
+				ChatServer.SendChatMessage (user, "MSG:* " + user.username + " " + jsonstr);
 			}
         }
     }

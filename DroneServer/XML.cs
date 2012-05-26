@@ -1,5 +1,15 @@
 using System;
+//using System.Object;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml.XPath;
+//using System.Xml.XmlReader;
+using System.Xml.Serialization;
+
+
+//
+//
 //using System.Text;
 //using System.Net;
 //using System.Net.Sockets;
@@ -24,7 +34,17 @@ namespace DroneServer
 			value = value_;
 		}	
 		
-		public XMLNode(string xmlstr) {
+		public void parseJSON(string jsonstr) {
+			//read forward until {
+			//get "[tag]"
+			//read forward until :
+			//  if next char == " then
+			//		get "[value"
+			//  else if next char == [
+		}
+		
+		public void parseXML (string xmlstr)
+		{
 			//Used to create data structure given a string
 			//1. search from left to right for <[tag]>
 			//2. search from right to left for </[tag]>
@@ -35,6 +55,62 @@ namespace DroneServer
 			//		b. does value contain at least one [tag]?
 			//			if not, set value to [value]
 			//			if, 
+			
+			
+			//convert string to stream
+			byte[] byteArray = Encoding.UTF8.GetBytes (xmlstr);
+			MemoryStream stream = new MemoryStream (byteArray);
+			
+			XPathDocument xmldoc = new XPathDocument (stream);
+			XPathNavigator nav = xmldoc.CreateNavigator ();
+			nav.MoveToRoot ();
+			
+			Console.Write ("The XML string for this PARENT ");
+			Console.Write ("  " + nav.Name + " ");
+			Console.WriteLine ("is '{0}'", nav.Value);
+			
+			
+			nav.MoveToFirstChild ();
+			
+			
+			
+			do {
+				//this code works, but it seems to only comb through 1 dept level
+				//Find the first element.
+				
+				if (nav.NodeType == XPathNodeType.Element) {
+					//if children exist
+					if (nav.HasChildren == true) {
+
+						//Move to the first child.
+						nav.MoveToFirstChild ();
+
+						//Loop through all the children.
+						do {
+							//Display the data.
+							Console.Write ("The XML string for this child ");
+							Console.Write ("  " + nav.Name + " ");
+							Console.WriteLine ("is '{0}'", nav.Value);
+							//Console.Write (" namespace: '{0}'", nav.GetNamespace);
+							//Console.WriteLine (" OuterXml: " + nav.);
+							
+							//.OuterXml really seems to show innerxml
+
+							//Check for attributes.
+							if (nav.HasAttributes == true) {
+								Console.WriteLine ("This node has attributes");
+							}
+						} while (nav.MoveToNext()); 
+					} else {
+						Console.Write ("The XML string for this PARENT ");
+						Console.Write ("  " + nav.Name + " ");
+						Console.WriteLine ("is '{0}'", nav.Value);
+
+					}
+				}
+			} while (nav.MoveToNext());
+			
+			
 			
 		}
 		
@@ -63,6 +139,30 @@ namespace DroneServer
 				ret += value;
 			}
 			ret += "</"+tag+">";
+			
+			return ret;
+		}
+		
+		public string makeJSONString ()
+		{
+			string ret = "{\"" + tag + "\":";
+			
+			if (childNodes.Count > 0) {
+				
+				ret += "[";
+				for (int i = 0; i < childNodes.Count; i ++) {
+					XMLNode node = childNodes [i];
+					ret += node.makeJSONString ();
+					if (i < childNodes.Count - 1)
+						ret += ",";
+				}
+				ret += "]";
+				
+			} else {
+				ret += "\"" + value + "\"";
+			}
+			
+			ret += "}";
 			
 			return ret;
 		}
