@@ -58,6 +58,7 @@
     <Compile Include="Server.Connection.cs" />
     <Compile Include="XML.cs" />
     <Compile Include="Crypto.cs" />
+    <Compile Include="_____algo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
