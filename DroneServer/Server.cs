@@ -85,30 +85,8 @@ namespace DroneServer
 		public static void OnCommand (Lists.MessageType messageType, UserData user, string message, string[] args)
 		{
 			if (messageType == Lists.MessageType.Message) { //move this to sendmessage
-             
-				string xmlstr = "";
-				string adminflag = "0";
-					
-				if (user.admin)
-					adminflag = "1";
-				
-				XMLNode rootnode = new XMLNode (null, "clientmsg", "");
-				
-				rootnode.childNodes.Add (new XMLNode (rootnode, "type", "chat"));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "room", "0"));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "to", "0"));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "from", user.username));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "admin", adminflag));
-				//We're going to have to escape the message string to make sure
-				// it doesn't have any <>
-				rootnode.childNodes.Add (new XMLNode (rootnode, "message", message));
-				
-				xmlstr = rootnode.makeXMLString ();
-				
-				
-				
-				
-				ChatServer.SendChatMessage (user, "MSG:" + user.username + adminflag + ":" + message);
+            	
+				ChatServer.SendChatMessage (user, message);
 				
 			} else if (messageType == Lists.MessageType.Action) {
 				

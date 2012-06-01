@@ -9,7 +9,10 @@ namespace DroneServer
         public static int maxCharictersInNickname = 10;
 	
 		//Database Constants
-		public static string DBConnectionString = "server=hypnoflow.org;user=test;database=hypnoflow;port=3306;password=hypn0sh1t;";
+		//Hypnoflow Server
+		//public static string DBConnectionString = "server=hypnoflow.org;user=test;database=hypnoflow;port=3306;password=hypn0sh1t;";
+		//Enzo's Machine
+		public static string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
 		public static string tblUser = "drones";  //I don't know if we really want to go here
 		
 		public DSConstants ()

@@ -7,6 +7,10 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 using System.Xml;
+using System.Xml.XPath;
+//using System.Xml.XmlReader;
+using System.Xml.Serialization;
+using System.Xml.Linq;
 
 
 namespace DroneServer {
@@ -196,6 +200,75 @@ namespace DroneServer {
         }
         private void ProcessMessage (string rawMessage)
 		{
+			
+			
+			byte[] byteArray = Encoding.UTF8.GetBytes (rawMessage);
+			MemoryStream stream = new MemoryStream (byteArray);
+			
+			Console.WriteLine ("3 stream: " + stream.Length);
+			XPathDocument xmldoc;
+			
+			try {
+				xmldoc = new XPathDocument (stream);
+			} catch (Exception ex) {
+				//Console.WriteLine ("Exception: " + (string)ex.ToString);
+				Console.WriteLine ("{0} Exception in xml: ",ex);
+				return;
+			}
+			Console.WriteLine ("4");
+			XPathNavigator nav = xmldoc.CreateNavigator ();
+			Console.WriteLine ("5");
+			nav.MoveToRoot ();
+			Console.WriteLine ("6");
+		
+			nav.MoveToFirstChild ();
+			Console.WriteLine ("7");
+			
+			Console.WriteLine ("8. ProcessMessage: [" + rawMessage + "]");
+			
+			do {
+				//this code works, but it seems to only comb through 1 dept level
+				//Find the first element.
+				
+				if (nav.NodeType == XPathNodeType.Element) {
+					//if children exist
+					if (nav.HasChildren == true) {
+
+						//Move to the first child.
+						nav.MoveToFirstChild ();
+
+						//Loop through all the children.
+						do {
+							//loop through the xml and look for type flag
+							
+							if (nav.Name == "type") {
+								//we found the type flag, now figure out
+								//where to send this message
+								
+								if (nav.Value == "chat") {
+									//send to chat server
+									//Note, I'm bypassing Server.OnCommand
+									//why do we need it?
+									Console.WriteLine ("Found a chat message, calling interpretchatxml");
+									ChatServer.interpretChatXML (user,nav);
+									return;
+								}
+							}
+							
+						} while (nav.MoveToNext()); 
+					} else {
+						
+						//Console.Write ("The XML string for this PARENT ");
+						//Console.Write ("  " + nav.Name + " ");
+						//Console.WriteLine ("is '{0}'", nav.Value);
+						
+					}
+				}
+			} while (nav.MoveToNext());
+			
+			return;
+			/*
+			//this stuff is obsolete since moving to xml
 			List<string> splitArray = new List<string> (rawMessage.Split (new char[] { ':' }));
 			string command = splitArray [0];
 			splitArray.RemoveAt (0);
@@ -225,28 +298,7 @@ namespace DroneServer {
 				rootnode.childNodes.Add (new XMLNode (rootnode, "to", "0"));
 				rootnode.childNodes.Add (new XMLNode (rootnode, "message", "wacka flacka"));
 
-				/*
-				rootnode.lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild (), "subchild1", "1")
-				);
-				rootnode.lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild (), "subchild2", "2")
-				);
-				rootnode.lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild (), "subchild3", "3")
-				);
 				
-				rootnode.lastChild ().lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild ().lastChild (), "supersub1", "1")
-				);
-				rootnode.lastChild ().lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild ().lastChild (), "supersub2", "2")
-				);
-				
-				rootnode.lastChild ().childNodes.Add (
-					new XMLNode (rootnode.lastChild (), "subchild4", "4")
-				);
-				*/
 				
 				jsonstr = rootnode.makeJSONString ();
 				xmlstr = rootnode.makeXMLString ();
@@ -256,6 +308,7 @@ namespace DroneServer {
 				ChatServer.SendChatMessage (user, "MSG:* " + user.username + " " + xmlstr);
 				ChatServer.SendChatMessage (user, "MSG:* " + user.username + " " + jsonstr);
 			}
+			*/
         }
     }
 }
