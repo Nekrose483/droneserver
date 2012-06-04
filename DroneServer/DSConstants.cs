@@ -10,11 +10,11 @@ namespace DroneServer
 	
 		//Database Constants
 		//Hypnoflow Server
-		//public static string DBConnectionString = "server=localhost;user=test;database=hypnoflow;port=3306;password=hypn0sh1t;";
+		public static string DBConnectionString = "server=localhost;user=test;database=hypnoflow;port=3306;password=hypn0sh1t;";
 		//Enzo's Machine
-		public static string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
-		//Katja's Machine
-		//public static string DBConnectionString = "server=localhost;user=root;database=hypnoflow;port=3306;password=tsunami;";
+		//public static string DBConnectionString = "server=localhost;user=root;database=test;port=3306;password=motion;";
+		//Katja's Machine	
+	    //public static string DBConnectionString = "server=localhost;user=root;database=hypnoflow;port=3306;password=tsunami;";
 		
 		public static string tblUser = "drones";  //I don't know if we really want to go here but i will anyway
 		

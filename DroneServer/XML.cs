@@ -1,23 +1,11 @@
 using System;
-//using System.Object;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
-//using System.Xml.XmlReader;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
-
-
-//
-//
-//using System.Text;
-//using System.Net;
-//using System.Net.Sockets;
-//using System.IO;
-//using System.Threading;
-//using System.Collections;
 
 namespace DroneServer
 {
