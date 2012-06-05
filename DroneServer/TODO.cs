@@ -6,23 +6,8 @@
  * requests should be sent from drnclient to mstrclient as a popup
  * "Username wishes to: some_task_here. will you allow this?" [yes, no]
  * 
- * 
- * when sending requests, they should be asked to ask either master or mistress
- * that should be presented in a pop up window when they click "ask"
- * 
- *  Enzo: Ok.  It seems like we should also build in a way to obtain the current
- *  	  tasks assigned to each user.  Talking to Charles, he wants to distinguish
- * 		  between two kinds of tasks: requests and orders.  Anyone can make
- * 		  requests of anyone else.  Orders can only be made from section leader
- * 		  to section leader, or from section leader to drones of the same section.
- * 		  There is also a special condition in which drones in a section and order
- * 		  the leader of their section given a vote (so, we'll have to have a system
- * 		  for proposing votes for things).  According to Charles, orders do not
- * 		  need to be obeyed, but if they are not, they need to be explicitly denied.
- * 		  Given that, the db might be modified in the following way:
- * 		  
- * 		  Additions to user table:
- * 			section leader - boolean (or small int)
+ * TASKS: if section_leader then you can send requests to others with the same position, or drones.
+ * Master can send anyone orders.
  * 
  * 		  New table, tasks:
  * 			[this table stores tasks (requests or orders) ]
@@ -76,7 +61,7 @@
  * 
  * fix where it says "drone" to family member
  * assign everyone temporary IDs
- * remove rank and section leader
+ * remove rank
  * get new icons
  * get everyone's ages
  * 
