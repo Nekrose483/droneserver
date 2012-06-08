@@ -24,16 +24,7 @@ namespace DroneServer
 			value = value_;
 		}	
 		
-		public void parseJSON(string jsonstr) {
-			//read forward until {
-			//get "[tag]"
-			//read forward until :
-			//  if next char == " then
-			//		get "[value"
-			//  else if next char == [
-		}
-		
-		public void parseXML (string xmlstr)
+		public void parseXML (string xmlstr) //does this do anything?
 		{
 			//Used to create data structure given a string
 			//1. search from left to right for <[tag]>
@@ -99,9 +90,6 @@ namespace DroneServer
 					}
 				}
 			} while (nav.MoveToNext());
-			
-			
-			
 		}
 		
 		public XMLNode lastChild ()
@@ -132,32 +120,6 @@ namespace DroneServer
 			
 			return ret;
 		}
-		
-		public string makeJSONString ()
-		{
-			string ret = "{\"" + tag + "\":";
-			
-			if (childNodes.Count > 0) {
-				
-				ret += "[";
-				for (int i = 0; i < childNodes.Count; i ++) {
-					XMLNode node = childNodes [i];
-					ret += node.makeJSONString ();
-					if (i < childNodes.Count - 1)
-						ret += ",";
-				}
-				ret += "]";
-				
-			} else {
-				ret += "\"" + value + "\"";
-			}
-			
-			ret += "}";
-			
-			return ret;
-		}
-		
-		
 	}
 }
 

@@ -12,7 +12,6 @@ namespace DroneServer
 {
 	public static class AdminTools
     {
-        //you can disconnect a user with this.
         public static void disconnectUser (string Nick, string reason)
 		{
 			string nickToKill = Nick;
@@ -27,7 +26,7 @@ namespace DroneServer
 				Console.WriteLine ("Disconnecting user [" +(string) Nick + "]");
             }
         }
-        //mute users with this
+		
         public static void muteUser(string nick, string adminNick)
         {
             string nIck = nick;
@@ -52,7 +51,7 @@ namespace DroneServer
                 }
             }
         }
-        //unmute users with this
+
         public static void unMuteUser(string nick, string adminNick)
         {
             string nIck = nick;
@@ -73,18 +72,18 @@ namespace DroneServer
                 Lists.getConnectionByNick[adminNick].sendMessageToUser("MSG:SERVER: ---The Nickname "+nick+" Isnt Muted");
             }
         }
-        //just another version of SendAdminMessage
+
         public static void sendNotice(string message)
         {
             ChatServer.SendAdminMessage(message);
         }
-        //send a notice to only one user.
+
         public static void sendPrivateNotice(string nickToNotice, string message)
         {
             if (Lists.getConnectionByNick.ContainsKey(nickToNotice))
                 Lists.getConnectionByNick[nickToNotice].sendMessageToUser("---<private notice> " + message);
         }
-        //mimic any nickname on the network (or a non existant one)
+
         public static void mimicUser(string nickToMimic, string message)
         {
 			//broken for now
@@ -93,7 +92,7 @@ namespace DroneServer
             ChatServer.OnCommand(Lists.MessageType.Message, "Administrator", "<" + nickToMimic + "> " + message, args);
             */
         }
-        //msg all online admins
+
         public static void msgAllOnlineAdmins(string message)
         {
             foreach (var a in Lists.OnlineAdmins)
@@ -101,12 +100,12 @@ namespace DroneServer
                 a.Value.sendMessageToUser("---Notice To Admins: " + message);
             }
         }
-        //temparaily add an admin
+
         public static void addTempAdmin(string username, string password)
         {
             Lists.Admins.Add(username, password);
         }
-        //temaraily delete an admins permissions.
+
         public static void tempDelAdmin(string username)
         {
             string adminNick = "";

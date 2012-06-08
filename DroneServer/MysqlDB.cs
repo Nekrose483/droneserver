@@ -25,11 +25,6 @@ namespace DroneServer
 				
 				MySqlCommand cmd = new MySqlCommand (sql, conn);
 
-				//Console.WriteLine ("Enter a continent e.g. 'North America', 'Europe': ");
-				//string user_input = "North America";
-
-				//cmd.Parameters.AddWithValue ("@Continent", user_input);
-
 				MySqlDataReader rdr = cmd.ExecuteReader ();
 
 				while (rdr.Read()) {
@@ -109,6 +104,28 @@ namespace DroneServer
 			return ret;
 		}
 		//public bool modifyUserProfile(UserData commander, string targetUserName, string column, string value) {}
+		
+		
+		public string getTasks (UserData requester)
+		{
+			string ret = "";
+			
+			try {
+				string sql = "SELECT * FROM " + DSConstants.tblTasks + "WHERE to_unit = " + requester.unit + " AND to_number = " + requester.number + ";";
+				
+				MySqlCommand cmd = new MySqlCommand (sql, conn);
+				MySqlDataReader rdr = cmd.ExecuteReader ();
+
+				while (rdr.Read()) {
+					//	(string)rdr ["username"] + adminStr + "\n"; //add this to a UserData but for tasks
+				}
+				rdr.Close ();
+			} catch (Exception ex) {
+				Console.WriteLine("ERROR: " + ex.ToString);
+				 
+			}
+			return ret; //no idea what to return.. any array of some kind? a List of tasks? make a UserData for tasks.
+		}
 		
 		
 		public void close ()

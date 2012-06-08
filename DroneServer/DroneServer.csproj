@@ -59,6 +59,8 @@
     <Compile Include="XML.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="_____algo.cs" />
+    <Compile Include="Tasks.cs" />
+    <Compile Include="TaskStuff.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

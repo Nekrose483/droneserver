@@ -12,8 +12,10 @@
  * 		  New table, tasks:
  * 			[this table stores tasks (requests or orders) ]
  * 			 id							- long int (unique key)
- * 			 sender		   				- long int? (what ever the key value is in the user table)
- * 			 recipient     				- [same as above]
+ * 			 from_unit		   				- long int? (what ever the key value is in the user table)
+ *  		 from_number		   				- long int? (what ever the key value is in the user table)
+ * 			 to_unit     				- [same as above]
+ * 			 to_number     				- [same as above]
  * 			 task          				- text
  *           creation_date 				- datetime
  * 											This way we could calculate time outstanding, to find negligent drones
@@ -40,23 +42,7 @@
  * 			comments					- text (feedback from reviewer)
  * 			decision_date				- datetime
  * 
- * TABLE: positions
- * 
- * 1  Drone
- * 2  Targeted
- * 3  Seducer
- * 4  Hunter
- * 5  Muscle
- * 6  Caretaker
- * 7  Security
- * 8  Conditioner
- * 9  Engineer
- * 10  Beta
- * 11  Alpha
- * 12  Alpha's and Master's assistant
- * 0  temp account for testing
- * -1  Master
- * 
+
  * website todo: 
  * 
  * fix where it says "drone" to family member
@@ -64,5 +50,12 @@
  * remove rank
  * get new icons
  * get everyone's ages
+ * add "muted" to the db
+ * 
+ * 
+ * 
  * 
  */
+
+
+//REMOVE USELESS CODE in stuff like MysqlDB.cs and other places

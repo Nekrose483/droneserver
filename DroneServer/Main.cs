@@ -16,21 +16,10 @@ namespace DroneServer
 		{
 			IPAddress ipAddr = IPAddress.Parse ("127.0.0.1");
 			Server mainServer = new Server (ipAddr);
-			//   ChatServer.StatusChanged += new StatusChangedEventHandler(mainServer_StatusChanged);
 			Console.WriteLine ("Drone Control System: ONLINE");
-			mainServer.StartListening (); //This starts a thread to listen
+			mainServer.StartListening ();
 			
-			while (1 == 1) { } //Main loop
+			while (1 == 1) { }
 		}
-		/*
-		public void mainServer_StatusChanged(object sender, StatusChangedEventArgs e)
-        {
-           // this.Invoke(new UpdateStatusCallback(this.UpdateStatus), new object[] { e.EventMessage });
-        }
-        private void UpdateStatus(string strMessage)
-        {
-           // txtLog.AppendText(strMessage + "\r\n");
-        }
-        */
 	}
 }
