@@ -22,6 +22,7 @@ namespace DroneServer {
 		public bool muted;
 		
 		
+		
 		public UserData (string username_,
 		                 string password_,
 		                 string key_,
