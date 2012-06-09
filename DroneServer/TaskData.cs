@@ -22,7 +22,6 @@ namespace DroneServer
 	Console.WriteLine(value == DateTime.Today);
 		 Console.WriteLine(yesturday == DateTime.Today.AddDays(-1)); */
 		
-		//change server task date to datetime
 				
 		public TaskData (int from_unit_,
  						 int from_number_,
