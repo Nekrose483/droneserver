@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 
 namespace DroneServer
 {
-	class MysqlDB
+	public class MysqlDB
 	{
 		public MySqlConnection conn;
 		
@@ -15,24 +16,6 @@ namespace DroneServer
 				conn.Open ();
 			} catch (Exception ex) {
 				Console.WriteLine ("Exception connecting to database: " + ex.ToString ());
-			}
-		}
-		
-		public void query ()
-		{
-			try {
-				string sql = "SELECT * FROM " + DSConstants.tblUser;
-				
-				MySqlCommand cmd = new MySqlCommand (sql, conn);
-
-				MySqlDataReader rdr = cmd.ExecuteReader ();
-
-				while (rdr.Read()) {
-					Console.WriteLine (rdr ["username"] + " --- " + rdr ["admin"] );
-				}
-				rdr.Close ();
-			} catch (Exception ex) {
-				Console.WriteLine (ex.ToString ());
 			}
 		}
 		
@@ -106,25 +89,62 @@ namespace DroneServer
 		//public bool modifyUserProfile(UserData commander, string targetUserName, string column, string value) {}
 		
 		
-		public string getTasks (UserData requester)
+		public List<TaskData> getUserTasks (UserData requester)
 		{
 			string ret = "";
-			
+			List<TaskData> tasks = new List<TaskData>();
+			TaskData task;
+		
 			try {
-				string sql = "SELECT * FROM " + DSConstants.tblTasks + "WHERE to_unit = " + requester.unit + " AND to_number = " + requester.number + ";";
+				string sql = "SELECT * FROM " + DSConstants.tblTasks + " WHERE to_unit = " + requester.unit + " AND to_number = " + requester.number + ";";
 				
 				MySqlCommand cmd = new MySqlCommand (sql, conn);
 				MySqlDataReader rdr = cmd.ExecuteReader ();
 
 				while (rdr.Read()) {
-					//	(string)rdr ["username"] + adminStr + "\n"; //add this to a UserData but for tasks
+					task = new TaskData ();
+					
+					task.from_unit = (int)rdr ["from_unit"];
+					task.from_number = (int)rdr ["from_number"];
+					task.to_unit = (int)rdr ["to_unit"];
+					task.to_number = (int)rdr ["to_number"];
+					task.taskcontent = (string)rdr ["task"];
+					task.creation_date = System.DateTime.Parse ((string)rdr ["create_date"]);
+					task.end_date = System.DateTime.Parse ((string)rdr ["end_date"]);
+					task.tasktype = (int)rdr ["type"];
+					
+					if ((int)rdr ["requires_review"] == 0) {
+						task.requires_review = false;
+					} else {
+						task.requires_review = true;
+					}
+					
+					if ((int)rdr ["completed"] == 0) {
+						task.completed = false;
+					} else {
+						task.completed = true;
+					}
+					
+					if ((int)rdr ["denied"] == 0) {
+						task.denied = false;
+					} else {
+						task.denied = true;
+					}
+					
+					if ((int)rdr ["failed"] == 0) {
+						task.failed = false;
+					} else {
+						task.failed = true;
+					}
+					
+					tasks.Add (task);
 				}
 				rdr.Close ();
 			} catch (Exception ex) {
-				Console.WriteLine("ERROR: " + ex.ToString);
+				Console.WriteLine ("{0} Exception.", ex);
 				 
 			}
-			return ret; //no idea what to return.. any array of some kind? a List of tasks? make a UserData for tasks.
+			return tasks; 
 		}
 		
 		

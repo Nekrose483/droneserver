@@ -205,26 +205,25 @@ namespace DroneServer {
 			byte[] byteArray = Encoding.UTF8.GetBytes (rawMessage);
 			MemoryStream stream = new MemoryStream (byteArray);
 			
-			Console.WriteLine ("3 stream: " + stream.Length);
+			
 			XPathDocument xmldoc;
 			
 			try {
 				xmldoc = new XPathDocument (stream);
 			} catch (Exception ex) {
-				//Console.WriteLine ("Exception: " + (string)ex.ToString);
 				Console.WriteLine ("{0} Exception in xml: ",ex);
 				return;
 			}
-			Console.WriteLine ("4");
+			
 			XPathNavigator nav = xmldoc.CreateNavigator ();
-			Console.WriteLine ("5");
+			
 			nav.MoveToRoot ();
-			Console.WriteLine ("6");
+			
 		
 			nav.MoveToFirstChild ();
-			Console.WriteLine ("7");
 			
-			Console.WriteLine ("8. ProcessMessage: [" + rawMessage + "]");
+			
+			
 			
 			do {
 				//this code works, but it seems to only comb through 1 dept level
@@ -249,7 +248,6 @@ namespace DroneServer {
 									//send to chat server
 									//Note, I'm bypassing Server.OnCommand
 									//why do we need it?
-									Console.WriteLine ("Found a chat message, calling interpretchatxml");
 									ChatServer.interpretChatXML (user,nav);
 									return;
 								}

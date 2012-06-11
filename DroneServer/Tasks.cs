@@ -1,54 +1,35 @@
 using System;
+using System.Collections.Generic;
+
 namespace DroneServer
 {
 	public class Tasks
 	{
-		public Tasks ()
+		MysqlDB db;
+		
+		public Tasks (MysqlDB db_)
 		{
+			db = db_;
 		}
 		
-		public static void get_tasks (UserData requester) //
+		//Here's what we need
+		// 1. a data structure to hold a task
+		// 2. getUserTasks(User) - returns a list of Tasks for User
+		// 3. getCreatorTasks(User) -- returns a list of Tasks created by User
+		// 3. formatXMLTask(task) - returns a string representation of a task 
+		// 4. interpretTaskXML -- interprets requests for user and creator tasks, new tasks, and task progress updates
+		// 4. a function to interpret new tasks from XML (and write to DB)
+		// 5. a function to interpret task progress from XML (and update the DB)
+		
+		public void getUserTasks (UserData requester) //
 		{
-			MysqlDB.getTasks();
+			List<TaskData> tasks;
+			
+			tasks = db.getUserTasks(requester);
 			
 		}
 		
-		public static string formatXMLTask (UserData sender, int to_unit, int to_number, string title, string body)
-		{
-			
-			string xmlstr = "";
-			
-
-			// <x>
-			//		<type>task</type>
-			//		<from_unit>fromunit</from_unit>
-			//		<from_number>fromnumber</from_number>
-			//		<to_unit>tounit</to_unit>
-			//		<to_number>tonumber</to_number>
-			//		<title>task_title</title>
-			//		<body>task_body</body>
-			// </x>
-			
-			XMLNode rootnode = new XMLNode (null, "x", ""); 
-
-			rootnode.childNodes.Add (new XMLNode (rootnode, "type", "task"));
-			if (sender != null) {
-				rootnode.childNodes.Add (new XMLNode (rootnode, "from_unit", sender.unit));
-				rootnode.childNodes.Add (new XMLNode (rootnode, "from_number", sender.number)); //fix this in UserData
-			}//unit and number
-			else
-				rootnode.childNodes.Add (new XMLNode(rootnode, "from","unknown"));
-			
-			rootnode.childNodes.Add (new XMLNode (rootnode, "to", receivername));
-			rootnode.childNodes.Add (new XMLNode (rootnode, "channel", channel));
-			rootnode.childNodes.Add (new XMLNode (rootnode, "message", message));
-				
-			
-			xmlstr = rootnode.makeXMLString ();
-			//rootnode.parseXML (xmlstr);	
-			
-			return xmlstr;
-		}
+		
 		
 		public static void SendTask (UserData FromUser, string Message)
 		{
@@ -102,5 +83,7 @@ namespace DroneServer
             }
         }
 	}
+	
+
 }
 

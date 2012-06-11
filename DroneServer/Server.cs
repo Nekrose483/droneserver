@@ -33,7 +33,7 @@ namespace DroneServer
 		{
 			ipAddress = address;
 			sqldb = new MysqlDB ();
-			sqldb.query ();
+			
 			ChatServer chatserver = new ChatServer (this);
 			//sqldb.close (); <-- we should only do this before we shut down, but i'm not sure how to capture that
         }
