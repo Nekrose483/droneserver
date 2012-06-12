@@ -50,8 +50,6 @@
  * remove rank
  * get new icons
  * get everyone's ages
- * add "muted" to the db
- * 
  * 
  * 
  * 
