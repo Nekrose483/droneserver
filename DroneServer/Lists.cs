@@ -8,7 +8,6 @@ using System.Threading;
 using System.Collections;
 
 namespace DroneServer {
-	//every day I'm hus- hus-tl-ing
 	
 	public static class Lists
     {

@@ -42,7 +42,7 @@ namespace DroneServer
 					if ((int)rdr ["admin"] == 1)
 						admin = true;
 					if ((int)rdr ["muted"] == 1)
-						muted = true; //naughty
+						muted = true;
 					
 					retUser = new UserData ((string)rdr ["username"], password, "", null, null, admin,muted);
 					
@@ -60,7 +60,7 @@ namespace DroneServer
 		//some Prototype DB functions
 		//public bool setMuteUser(UserData commander, string targetUserName, bool muteStatus) {}
 		//public string getUserInfo(UserData commander, string targetUserName) {}
-		public string getUserList (UserData commander)
+		public string getUserList (UserData commander) //get user list from db to send to drone client
 		{
 			string ret = "";
 			

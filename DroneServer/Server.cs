@@ -10,12 +10,6 @@ using System.Collections;
 
 namespace DroneServer
 {
-
-    
-   
-    
-	
-	
 	class Server
 	{
 		//I hate these structures, they should both be replaced by something more robust
@@ -24,8 +18,6 @@ namespace DroneServer
 		
         private IPAddress ipAddress;
         private TcpClient tcpClient;
-        //public static event StatusChangedEventHandler StatusChanged;
-        //private static StatusChangedEventArgs e;
 		public static MysqlDB sqldb;
 		public static ChatServer chatserver;
 		
@@ -33,7 +25,7 @@ namespace DroneServer
 		{
 			ipAddress = address;
 			sqldb = new MysqlDB ();
-			
+			sqldb.query ();
 			ChatServer chatserver = new ChatServer (this);
 			//sqldb.close (); <-- we should only do this before we shut down, but i'm not sure how to capture that
         }
@@ -145,14 +137,8 @@ namespace DroneServer
         public void StartListening()
         {
             IPAddress ipaLocal = ipAddress;
-            tlsClient = new TcpListener(1986);
+            tlsClient = new TcpListener(DSConstants.port);
             tlsClient.Start();
-			/*
-			 * Deprecated since transition to mysql db
-            Lists.Admins.Add("Admin", "123987");
-            Lists.Admins.Add("user2", "password"); //sql look up if admin = 1
-            Lists.Admins.Add("user3", "password");
-            */
             ServRunning = true;
             thrListener = new Thread(KeepListening);
             thrListener.Start();
@@ -166,10 +152,5 @@ namespace DroneServer
             }
         }
 	}
-	
-    
-    
-    //#endregion //wtf is this?
-	
 }
 
