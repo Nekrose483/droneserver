@@ -34,17 +34,78 @@ namespace DroneServer
 				
 				
 				while (rdr.Read()) {
-					Console.WriteLine (rdr ["username"] + " --- " + rdr ["admin"]);
+					//Console.WriteLine (rdr ["username"] + " --- " + rdr ["admin"]);
 					
 					bool admin = false;
 					bool muted = false;
-					
+					int unit = -1;
+					int number = -1;
+					int position_id = -1;
+					int rank = -1;
+
 					if ((int)rdr ["admin"] == 1)
 						admin = true;
 					if ((int)rdr ["muted"] == 1)
 						muted = true;
-					
+					if ((int)rdr["unit"] != null)
+						unit = (int)rdr["unit"];
+					if ((int)rdr["number"] != null)
+						number = (int)rdr["number"];
+					if ((int)rdr["position_id"] != null)
+						position_id = (int)rdr["position_id"];
+					if ((int)rdr["rank"] != null)
+						rank = (int)rdr["rank"];
+
 					retUser = new UserData ((string)rdr ["username"], password, "", null, null, admin,muted);
+					
+					rdr.Close ();
+					return retUser;
+				}
+				rdr.Close ();
+			} catch (Exception ex) {
+				//Console.WriteLine (ex.ToString ());
+				return null;
+			}
+			return null;
+		}
+
+		public UserData getUserData (string username)
+		{
+			UserData retUser = null;
+			
+			try {
+				string sql = "SELECT * FROM " + DSConstants.tblUser + " WHERE username=@Username";
+				MySqlCommand cmd = new MySqlCommand (sql, conn);
+
+				cmd.Parameters.AddWithValue ("@Username", username);
+			
+				MySqlDataReader rdr = cmd.ExecuteReader ();
+				
+				
+				while (rdr.Read()) {
+			
+					
+					bool admin = false;
+					bool muted = false;
+					int unit = -1;
+					int number = -1;
+					int position_id = -1;
+					int rank = -1;
+
+					if ((int)rdr ["admin"] == 1)
+						admin = true;
+					if ((int)rdr ["muted"] == 1)
+						muted = true;
+					if ((int)rdr["unit"] != null)
+						unit = (int)rdr["unit"];
+					if ((int)rdr["number"] != null)
+						number = (int)rdr["number"];
+					if ((int)rdr["position_id"] != null)
+						position_id = (int)rdr["position_id"];
+					if ((int)rdr["rank"] != null)
+						rank = (int)rdr["rank"];
+
+					retUser = new UserData ((string)rdr ["username"], null, "", null, null, admin,muted);
 					
 					rdr.Close ();
 					return retUser;
@@ -56,7 +117,7 @@ namespace DroneServer
 			}
 			return null;
 		}
-		
+
 		//some Prototype DB functions
 		//public bool setMuteUser(UserData commander, string targetUserName, bool muteStatus) {}
 		//public string getUserInfo(UserData commander, string targetUserName) {}
@@ -88,7 +149,13 @@ namespace DroneServer
 		}
 		//public bool modifyUserProfile(UserData commander, string targetUserName, string column, string value) {}
 		
-		
+		public List<TaskData> getUserTasks (string username)
+		{
+			//Overload function, expects username, finds a matching UserData obj
+			// and calls getUserTasks(userdata), returning the results
+			UserData user = getUserData (username);
+			List<TaskData> tasks
+		}
 		public List<TaskData> getUserTasks (UserData requester)
 		{
 			string ret = "";

@@ -1,5 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading;
+using System.Collections;
+using System.Xml.XPath;
+//using System.Xml.XmlReader;
+using System.Xml.Serialization;
 
 namespace DroneServer
 {
@@ -21,7 +30,7 @@ namespace DroneServer
 		// 4. a function to interpret new tasks from XML (and write to DB)
 		// 5. a function to interpret task progress from XML (and update the DB)
 		
-		public void getUserTasks (UserData requester) //
+		public void getUserTasks (UserData requester, XPathNavigator nav) //
 		{
 			List<TaskData> tasks;
 			

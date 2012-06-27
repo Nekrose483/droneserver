@@ -16,9 +16,11 @@ namespace DroneServer {
 		public string username;
 		public string password;
 		public string key;
-		public string unit;
-		public string number;
-		
+		public int unit;
+		public int number;
+		public int position_id;
+		public int rank;
+
 		public Connection connection;
 		public TcpClient tcpUser;
 		public bool admin;

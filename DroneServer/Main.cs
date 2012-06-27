@@ -16,7 +16,7 @@ namespace DroneServer
 		{
 			IPAddress ipAddr = IPAddress.Parse ("127.0.0.1");
 			Server mainServer = new Server (ipAddr);
-			Console.WriteLine ("Drone Control System: ONLINE");
+			Console.WriteLine ("Imperial Chat Network: ONLINE");
 			mainServer.StartListening ();
 			
 			while (1 == 1) { }

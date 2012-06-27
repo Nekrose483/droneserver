@@ -1,5 +1,6 @@
-<<<<<<< HEAD
+
 using System;
+
 namespace DroneServer
 {
 	public class TaskData
@@ -192,4 +193,4 @@ namespace DroneServer
 	}
 }
 
->>>>>>> 578552eae096044e6ef81f453cc14d2db0915711
+

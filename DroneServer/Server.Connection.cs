@@ -250,6 +250,10 @@ namespace DroneServer {
 									//why do we need it?
 									ChatServer.interpretChatXML (user,nav);
 									return;
+								} else if (nav.Value == "gettask") {
+									//requests tasks
+								} else if (nav.Value == "requestFamilyMembers") {
+									//request family member
 								}
 							}
 							
