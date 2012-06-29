@@ -154,8 +154,10 @@ namespace DroneServer
 			//Overload function, expects username, finds a matching UserData obj
 			// and calls getUserTasks(userdata), returning the results
 			UserData user = getUserData (username);
-			List<TaskData> tasks
+			List<TaskData> tasks = getUserTasks (user);
+			return tasks;
 		}
+
 		public List<TaskData> getUserTasks (UserData requester)
 		{
 			string ret = "";

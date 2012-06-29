@@ -23,6 +23,8 @@ namespace DroneServer {
 
 		public Connection connection;
 		public TcpClient tcpUser;
+		public MysqlDB sqldb;
+
 		public bool admin;
 		public bool muted;
 		
@@ -33,6 +35,7 @@ namespace DroneServer {
 		                 string key_,
 		                 TcpClient tcpUser_,
 		                 Connection connection_,
+		                 MysqlDB mysqldb_,
 		                 bool admin_,
 		                 bool muted_)
 		{
@@ -41,6 +44,7 @@ namespace DroneServer {
 			key = key_;
 			tcpUser = tcpUser_;
 			connection = connection_;
+			mysqldb_ = mysqldb_;
 			admin = admin_;
 			muted = muted_;
 		}

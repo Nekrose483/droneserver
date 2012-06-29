@@ -20,6 +20,7 @@ namespace DroneServer {
         private Thread thrSender;
         private StreamReader srReceiver;
         private StreamWriter swSender;
+		public MysqlDB mysqldb;
         public string currUser;
         public string currUserAdmin;
 		public string currPassword;
@@ -28,11 +29,12 @@ namespace DroneServer {
         private bool hasConnectedYet = false;
         private string strResponse;
 		
-        public Connection(TcpClient tcpCon)
+        public Connection(TcpClient tcpCon, MysqlDB sqldb_)
         {
             tcpClient = tcpCon;
             thrSender = new Thread(AcceptClient);
             thrSender.Start();
+			mysqldb = sqldb_;
         }
         public void CloseConnection()
         {
@@ -252,6 +254,9 @@ namespace DroneServer {
 									return;
 								} else if (nav.Value == "gettask") {
 									//requests tasks
+									Tasks tasks = new Tasks(mysqldb);
+									String taskstring = tasks.getUserTasks(user,nav);
+
 								} else if (nav.Value == "requestFamilyMembers") {
 									//request family member
 								}

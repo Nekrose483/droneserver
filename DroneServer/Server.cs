@@ -20,13 +20,15 @@ namespace DroneServer
         private TcpClient tcpClient;
 		public static MysqlDB sqldb;
 		public static ChatServer chatserver;
-		
+		public static Tasks tasks;
+
         public Server (IPAddress address)
 		{
-			ipAddress = address;
+			ipAddress = address;	
 			sqldb = new MysqlDB ();
-			sqldb.query ();
+			//sqldb.query ();
 			ChatServer chatserver = new ChatServer (this);
+			tasks = new Tasks(sqldb);
 			//sqldb.close (); <-- we should only do this before we shut down, but i'm not sure how to capture that
         }
         private Thread thrListener;
@@ -57,6 +59,7 @@ namespace DroneServer
 			
 			Console.WriteLine ("Connecting user [" + (string)newuser.username + "]");
 		}
+
         public static void RemoveUser (TcpClient tcpUser)
 		{
 			if (htConnections [tcpUser] != null) {

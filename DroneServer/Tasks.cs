@@ -20,7 +20,7 @@ namespace DroneServer
 		{
 			db = db_;
 		}
-		
+
 		//Here's what we need
 		// 1. a data structure to hold a task
 		// 2. getUserTasks(User) - returns a list of Tasks for User
@@ -30,15 +30,21 @@ namespace DroneServer
 		// 4. a function to interpret new tasks from XML (and write to DB)
 		// 5. a function to interpret task progress from XML (and update the DB)
 		
-		public void getUserTasks (UserData requester, XPathNavigator nav) //
+		public string getUserTasks (UserData requester, XPathNavigator nav) //
 		{
 			List<TaskData> tasks;
-			
-			tasks = db.getUserTasks(requester);
-			
+			String ret = "";
+
+			tasks = db.getUserTasks (requester);
+
+			foreach (TaskData task in tasks) {
+				ret += task.formatXMLUserTask();
+			}
+
+			return ret;
 		}
-		
-		
+
+
 		
 		public static void SendTask (UserData FromUser, string Message)
 		{
