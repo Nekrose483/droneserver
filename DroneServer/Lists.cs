@@ -28,6 +28,7 @@ namespace DroneServer {
 			                           newuser.key,
 			                           newuser.tcpUser,
 			                           newuser.connection,
+			                           newuser.sqldb,
 			                           newuser.admin,
 			                           newuser.muted)
 			);

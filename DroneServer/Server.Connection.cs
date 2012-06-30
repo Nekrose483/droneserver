@@ -254,9 +254,11 @@ namespace DroneServer {
 									return;
 								} else if (nav.Value == "gettask") {
 									//requests tasks
-									Tasks tasks = new Tasks(mysqldb);
+									Tasks tasks = new Tasks(user.sqldb);
 									String taskstring = tasks.getUserTasks(user,nav);
-
+									if (taskstring != "") {
+										user.connection.sendMessageToUser (taskstring);
+									}
 								} else if (nav.Value == "requestFamilyMembers") {
 									//request family member
 								}

@@ -46,57 +46,7 @@ namespace DroneServer
 
 
 		
-		public static void SendTask (UserData FromUser, string Message)
-		{
-			if (FromUser.muted) {
 
-				FromUser.connection.sendMessageToUser (
-					formatXMLChatMessage(null,"NOTICE","","","You are muted, so you cannot talk.")
-					);
-				
-				/* Wtf?
-				e = new StatusChangedEventArgs ("MSG:NOTICE: Muted user> " + Message);
-				OnStatusChanged (e);
-				*/	
-				
-				//so, muted users can still spam admins?
-				//AdminTools.msgAllOnlineAdmins ("Muted user> " + Message);
-			} else {
-				if (Message.Trim () == "")
-					return;
-				
-				//Escape Message (chevrons will break xml) first
-				//because they'll break our xml
-				
-				string safe_message = HttpUtility.HtmlEncode (Message.Trim ());  //Regex.Escape (Message.Trim ());
-				string xml_message = formatXMLChatMessage(FromUser,"","0","0",safe_message);
-				
-				StreamWriter swSenderSender;
-				/*
-				 * wtf?
-				 * e = new StatusChangedEventArgs (Message);
-				OnStatusChanged (e);
-				*/
-				TcpClient[] tcpClients = new TcpClient[Server.htUsers.Count];
-				Server.htUsers.Values.CopyTo (tcpClients, 0);
-				for (int i = 0; i < tcpClients.Length; i++) {
-					try {
-						if (tcpClients [i] == null) {
-							continue;
-						}
-						swSenderSender = new StreamWriter (tcpClients [i].GetStream ());
-						
-						swSenderSender.WriteLine (xml_message);
-						swSenderSender.Flush ();
-						swSenderSender = null;
-					} catch {
-						//wtf? Why doesn't this work?
-						Server.RemoveUser (tcpClients [i]);
-						
-					}
-				}
-            }
-        }
 	}
 	
 

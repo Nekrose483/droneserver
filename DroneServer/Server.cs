@@ -38,6 +38,7 @@ namespace DroneServer
 		public static void AddUser (TcpClient tcpUser, string strUsername, string pass, string key, Connection connect, bool admin)
 		{
 			//this function deprecated and have been replaced by AddUser(UserData newuser)
+
 			ChatServer.SendAdminMessage ((string)"MSG:SERVER: "+strUsername + " connected.");
 			htUsers.Add (strUsername, tcpUser);
 			htConnections.Add (tcpUser, strUsername);
@@ -48,6 +49,7 @@ namespace DroneServer
 		
 		public static void AddUser (UserData newuser)
 		{
+			newuser.sqldb = sqldb;
 			ChatServer.SendAdminMessage ("MSG:SERVER: "+newuser.username + " connected.");
 			Lists.addConnectedUser (newuser);
 			
@@ -151,7 +153,7 @@ namespace DroneServer
             while (ServRunning == true)
             {
                 tcpClient = tlsClient.AcceptTcpClient();
-                Connection newConnection = new Connection(tcpClient);
+                Connection newConnection = new Connection(tcpClient,sqldb);
             }
         }
 	}

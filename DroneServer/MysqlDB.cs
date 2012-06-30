@@ -56,7 +56,7 @@ namespace DroneServer
 					if ((int)rdr["rank"] != null)
 						rank = (int)rdr["rank"];
 
-					retUser = new UserData ((string)rdr ["username"], password, "", null, null, admin,muted);
+					retUser = new UserData ((string)rdr ["username"], password, "", null, null, this, admin,muted);
 					
 					rdr.Close ();
 					return retUser;
@@ -105,7 +105,7 @@ namespace DroneServer
 					if ((int)rdr["rank"] != null)
 						rank = (int)rdr["rank"];
 
-					retUser = new UserData ((string)rdr ["username"], null, "", null, null, admin,muted);
+					retUser = new UserData ((string)rdr ["username"], null, "", null, null, this,admin,muted);
 					
 					rdr.Close ();
 					return retUser;

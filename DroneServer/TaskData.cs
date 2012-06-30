@@ -138,7 +138,7 @@ namespace DroneServer
 	}
 }
 
-=======
+/*=======
 using System;
 namespace DroneServer
 {
@@ -157,12 +157,7 @@ namespace DroneServer
 		public bool failed;
 		public DateTime end_date;
 		
-				/* 
-		 * DateTime value = new DateTime(2010, 1, 18);
-	Console.WriteLine(value);
-	Console.WriteLine(value == DateTime.Today);
-		 Console.WriteLine(yesturday == DateTime.Today.AddDays(-1)); */
-		
+
 				
 		public TaskData (int from_unit_,
  						 int from_number_,
@@ -193,4 +188,4 @@ namespace DroneServer
 	}
 }
 
-
+*/

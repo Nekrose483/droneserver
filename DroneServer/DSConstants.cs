@@ -7,7 +7,8 @@ namespace DroneServer
 		public static int maxConnections = 100;
 	    public static string acceptedNicknameCharicters =@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_\[]{}^";
         public static int maxCharictersInNickname = 10;
-	
+		public static int port = 1618;  //This looks like the current port in the client -enzo
+
 		//Database Constants
 		public static string DBConnectionString = "server=208.115.203.104;user=test;database=hypnoflow;port=3306;password=hypn0sh1t;";
 		public static string tblUser = "drones";
