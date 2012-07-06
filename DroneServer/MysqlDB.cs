@@ -172,7 +172,8 @@ namespace DroneServer
 
 				while (rdr.Read()) {
 					task = new TaskData ();
-					
+
+					task.id = (int)rdr["taskid"];
 					task.from_unit = (int)rdr ["from_unit"];
 					task.from_number = (int)rdr ["from_number"];
 					task.to_unit = (int)rdr ["to_unit"];
